@@ -1,26 +1,43 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink: #1C2B33;
+  --color-moss: #3E6259;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F6F4EF;
+  color: #1C2B33;
+}
+
+.card {
+  @apply bg-white border border-black/10 rounded-lg shadow-sm;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-md bg-ink px-4 py-2 text-sm font-medium text-white transition hover:bg-moss disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-md border border-black/15 bg-white px-4 py-2 text-sm font-medium text-ink transition hover:bg-black/5;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50;
+}
+
+.field-input {
+  @apply w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-black/35 focus:outline-none focus:ring-2 focus:ring-moss/40 focus:border-moss;
+}
+
+.field-label {
+  @apply mb-1 block text-sm font-medium text-ink/80;
+}
+
+.error-text {
+  @apply mt-1 text-sm text-red-600;
 }
