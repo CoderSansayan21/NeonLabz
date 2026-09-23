@@ -11,14 +11,22 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+import { AuthGuard } from '@nestjs/passport';
+
+import type { Request, Response } from 'express';
+
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-type AuthedRequest = Request & { user: { userId: string; email: string } };
+type AuthedRequest = Request & {
+  user: {
+    userId: string;
+    email: string;
+  };
+};
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -33,10 +41,11 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  // id JWT payload la irundhu varum, URL param la irundhu illa -
-  // so oruthar vera oruthar profile edit panna mudiyadhu
   @Patch('me')
-  updateOwn(@Req() req: AuthedRequest, @Body() dto: UpdateUserDto) {
+  updateOwn(
+    @Req() req: AuthedRequest,
+    @Body() dto: UpdateUserDto,
+  ) {
     return this.usersService.updateOwn(req.user.userId, dto);
   }
 
@@ -47,13 +56,16 @@ export class UsersController {
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.usersService.removeOwn(req.user.userId);
+
     const isProd = process.env.NODE_ENV === 'production';
+
     res.clearCookie('token', {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
       path: '/',
     });
+
     return { message: 'Account deleted' };
   }
 }
